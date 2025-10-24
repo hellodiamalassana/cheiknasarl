@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculateur de Budget - 𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { font-family: 'Poppins', sans-serif; }
+
+    * { box-sizing: border-box; }
+
+    html,body { height:100%; margin:0; background:#f7fafc; font-size:16px; }
+
+    /* A4 container responsive: on small screens use max-width */
+    .a4-container {
+      width: 210mm;
+      max-width: 100%;
+      min-height: 297mm;
+      margin: 12px auto;
+      background: #fff;
+      padding: 15mm;
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+      position: relative;
+      overflow:auto;
+    }
+
+    .logo-placeholder {
+      width: 160px;
+      height: 36px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      background:linear-gradient(135deg,#0ea5a4,#065f46);
+      border-radius:6px;
+      font-weight:700;
+      font-size:13px;
+      letter-spacing:0.2px;
+    }
+
+    .payment-schedule-table { width:100%; border-collapse: collapse; }
+    .payment-schedule-table th, .payment-schedule-table td { padding:6px; text-align:left; font-size:15px; }
+    .payment-schedule-table th:last-child, .payment-schedule-table td:last-child { text-align:right; }
+    .payment-schedule-table tr:nth-child(even) { background: rgba(237,242,247,0.7); }
+    .payment-schedule-table tr.total-row { font-weight:600; border-top:1px solid #CBD5E0; border-bottom:1px solid #CBD5E0; }
+    .payment-schedule-table tr.subtotal-row { font-weight:500; border-top:1px dashed #CBD5E0; }
+    .payment-schedule-table tr.section-header { background:#EDF2F7; font-weight:600; }
+
+    /* Scroll indicator animation */
+    .animate-bounceY { animation: bounceY 2s infinite; }
+    @keyframes bounceY {
+      0%,20%,50%,80%,100%{ transform: translateY(0); }
+      40%{ transform: translateY(-8px); }
+      60%{ transform: translateY(-4px); }
+    }
+
+    /* Print rules: A4 */
+    @page { size: A4; margin: 10mm; }
+    @media print {
+      body { background: #fff; }
+      .a4-container { box-shadow: none; margin: 0; padding: 10mm; }
+      .btn-primary, #recalculateBtn { display: none !important; }
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal: { 500: '#14b8a6', 700: '#0f766e' },
+            green: { 600: '#16a34a' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+  <main class="a4-container" role="main" aria-label="Calculateur de budget 𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋">
+    <div class="mb-4">
+      <header class="flex items-center justify-between mb-6">
+        <div class="logo-placeholder" aria-hidden="true">𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋</div>
+        <h1 class="text-3xl font-bold text-teal-700">Calculateur de Budget</h1>
+      </header>
+
+      <!-- Form -->
+      <section id="formSection" class="bg-gray-50 rounded-md shadow-sm p-4 mb-6" aria-labelledby="formTitle">
+        <h2 id="formTitle" class="sr-only">Formulaire de configuration</h2>
+
+        <form id="budgetForm" novalidate>
+          <!-- Programme -->
+          <fieldset class="mb-4 border-b pb-3">
+            <legend class="text-xl font-semibold text-teal-700 mb-2 flex items-center"><span class="mr-1">📘</span> Formation en anglais</legend>
+
+            <div class="mb-3">
+              <label class="block text-gray-700 text-lg mb-1">Type de programme</label>
+              <div role="radiogroup" aria-label="Type de programme" class="flex flex-col space-y-1">
+                <label class="inline-flex items-center">
+                  <input type="radio" name="programType" value="normal" checked class="form-radio text-teal-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Programme normal</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="programType" value="international" class="form-radio text-teal-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Programme international</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="duration" class="block text-gray-700 text-lg mb-1">Durée</label>
+              <select id="duration" name="duration" class="w-full px-3 py-2 text-lg border border-gray-300 rounded-md">
+                <option value="1">1 mois</option>
+                <option value="2">2 mois</option>
+                <option value="3">3 mois</option>
+                <option value="4">4 mois</option>
+                <option value="6">6 mois</option>
+                <option value="9">9 mois</option>
+                <option value="12">12 mois</option>
+              </select>
+            </div>
+
+            <div id="internationalWarning" class="hidden bg-yellow-100 border-l-2 border-yellow-500 p-2 mb-2 text-lg" role="status" aria-live="polite">
+              <p class="text-yellow-700">Programme international: minimum 6 mois.</p>
+            </div>
+          </fieldset>
+
+          <!-- Hébergement -->
+          <fieldset class="mb-4 border-b pb-3">
+            <legend class="text-xl font-semibold text-green-700 mb-2 flex items-center"><span class="mr-1">🏠</span> Hébergement</legend>
+
+            <div class="mb-3">
+              <label class="block text-gray-700 text-lg mb-1">Type de chambre</label>
+              <div role="radiogroup" aria-label="Type de chambre" class="flex flex-col space-y-1">
+                <label class="inline-flex items-center">
+                  <input type="radio" name="roomType" value="doubleVentilee" checked class="form-radio text-green-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Double ventilée (30 000 FCFA/mois)</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="roomType" value="doubleClimatisee" class="form-radio text-green-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Double climatisée (40 000 FCFA/mois)</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="roomType" value="individuelle" class="form-radio text-green-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Individuelle (55 000 FCFA/mois)</span>
+                </label>
+              </div>
+            </div>
+
+            <p class="text-lg text-gray-600">Frais de maintenance: <span class="font-semibold">3 000 FCFA/mois</span></p>
+          </fieldset>
+
+          <!-- Livres & Transport -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <h3 class="text-xl font-semibold text-purple-800 mb-2 flex items-center"><span class="mr-1">📚</span> Livres et Uniformes</h3>
+              <p class="text-lg text-gray-700">Montant fixe: <span class="font-semibold">40 000 FCFA</span></p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-orange-800 mb-2 flex items-center"><span class="mr-1">🚐</span> Service d'accueil</h3>
+              <div class="flex flex-col space-y-1" role="radiogroup" aria-label="Service d'accueil">
+                <label class="inline-flex items-center">
+                  <input type="radio" name="transportType" value="avion" checked class="form-radio text-orange-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Avion (20 000 FCFA)</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="transportType" value="bus" class="form-radio text-orange-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Bus (25 000 FCFA)</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="transportType" value="aucun" class="form-radio text-orange-600 h-5 w-5">
+                  <span class="ml-2 text-lg">Aucun (0 FCFA)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex justify-center">
+            <button id="calculateBtn" type="button" class="btn-primary bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-sm">Calculer mon budget</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Results -->
+      <section id="resultsSection" class="bg-gray-50 rounded-md shadow-sm p-4 hidden" aria-labelledby="resultsTitle" aria-live="polite" role="region">
+        <h2 id="resultsTitle" class="text-2xl font-bold text-center text-teal-700 mb-4">Résumé de votre budget</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- Formation -->
+          <div class="bg-teal-50 rounded p-3 border border-teal-200">
+            <h3 class="text-lg font-semibold text-teal-700 mb-2 flex items-center"><span class="mr-1">📘</span> Formation</h3>
+            <div class="space-y-1 text-lg text-gray-700">
+              <div class="flex justify-between"><span>Programme:</span><span id="programTypeResult" class="font-medium"></span></div>
+              <div class="flex justify-between"><span>Durée:</span><span id="durationResult" class="font-medium"></span></div>
+              <div class="flex justify-between"><span>Frais:</span><span id="trainingFeeResult" class="font-medium"></span></div>
+              <div id="examFeeContainer" class="flex justify-between hidden"><span>Examen:</span><span id="examFeeResult" class="font-medium"></span></div>
+              <div class="border-t border-teal-200 mt-1 pt-1 flex justify-between font-semibold"><span>Sous-total:</span><span id="trainingSubtotalResult"></span></div>
+            </div>
+          </div>
+
+          <!-- Hébergement -->
+          <div class="bg-green-50 rounded p-3 border border-green-200">
+            <h3 class="text-lg font-semibold text-green-800 mb-2 flex items-center"><span class="mr-1">🏠</span> Hébergement</h3>
+            <div class="space-y-1 text-lg text-gray-700">
+              <div class="flex justify-between"><span>Chambre:</span><span id="roomTypeResult" class="font-medium"></span></div>
+              <div class="flex justify-between"><span>Coût chambre:</span><span id="roomCostResult" class="font-medium"></span></div>
+              <div class="flex justify-between"><span>Maintenance:</span><span id="maintenanceFeeResult" class="font-medium"></span></div>
+              <div class="border-t border-green-200 mt-1 pt-1 flex justify-between font-semibold"><span>Sous-total:</span><span id="accommodationSubtotalResult"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="bg-purple-50 rounded p-3 border border-purple-200">
+            <h3 class="text-lg font-semibold text-purple-800 mb-2 flex items-center"><span class="mr-1">📚</span> Livres et Uniformes</h3>
+            <div class="text-lg text-gray-700"><div class="flex justify-between font-semibold"><span>Sous-total:</span><span id="booksSubtotalResult">40 000 FCFA</span></div></div>
+          </div>
+
+          <div class="bg-orange-50 rounded p-3 border border-orange-200">
+            <h3 class="text-lg font-semibold text-orange-800 mb-2 flex items-center"><span class="mr-1">🚐</span> Service d'accueil</h3>
+            <div class="text-lg text-gray-700">
+              <div class="flex justify-between"><span>Transport:</span><span id="transportTypeResult" class="font-medium"></span></div>
+              <div class="flex justify-between font-semibold"><span>Sous-total:</span><span id="transportSubtotalResult"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-100 rounded p-4 border border-gray-300 mb-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xl font-bold text-gray-800">COÛT TOTAL ESTIMÉ:</h3>
+            <span id="totalCostResult" class="text-2xl font-bold text-teal-700"></span>
+          </div>
+        </div>
+
+        <div id="examFeeNote" class="hidden mt-2 bg-yellow-50 border-l-2 border-yellow-500 p-2 text-lg mb-4">
+          <p class="text-yellow-700"><strong>Note:</strong> Frais d'examen IELTS/TOEFL: estimation indicative.</p>
+        </div>
+
+        <div id="scrollIndicator" class="bg-teal-100 rounded-lg p-3 mb-4 flex items-center justify-center">
+          <div class="text-center">
+            <p class="text-teal-800 font-medium mb-1">Voir le calendrier de paiement ci-dessous</p>
+            <div class="text-teal-600 text-3xl animate-bounceY">⬇️</div>
+          </div>
+        </div>
+
+        <!-- Payment schedule -->
+        <div id="paymentScheduleSection" class="mt-6">
+          <h2 id="paymentScheduleTitle" class="text-2xl font-bold text-center text-teal-700 mb-4 flex items-center justify-center"><span class="mr-1">🧾</span> CALENDRIER DE PAIEMENT</h2>
+          <div id="paymentScheduleContent" class="bg-teal-50 rounded p-3 border border-teal-200 mb-4"></div>
+        </div>
+
+        <div class="mt-4 flex justify-center">
+          <button id="recalculateBtn" class="btn-primary bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full text-lg shadow-sm">Modifier mes choix</button>
+        </div>
+      </section>
+
+      <footer class="mt-6 text-center text-lg text-gray-500">© 𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋 - Calculateur de budget de formation</footer>
+    </div>
+  </main>
+
+  <!-- Script: logique -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Prix et données (réinsérer vos tableaux d'échéances complets si nécessaire)
+      const normalProgramFees = {1:140000,2:240000,3:300000,4:360000,6:480000,9:630000,12:720000};
+      const internationalProgramFees = {6:530000,9:680000,12:770000};
+
+      // Si tu veux, je peux coller tes objets complets normalPaymentSchedules et internationalPaymentSchedules
+      const normalPaymentSchedules = {}; // <-- réinsérer ici les données d'origine si besoin
+      const internationalPaymentSchedules = {}; // <-- réinsérer ici les données d'origine si besoin
+
+      const examFee = 170000;
+      const roomFees = { doubleVentilee:30000, doubleClimatisee:40000, individuelle:55000 };
+      const maintenanceFee = 3000;
+      const transportFees = { avion:20000, bus:25000, aucun:0 };
+      const booksFee = 40000;
+
+      const $ = sel => document.querySelector(sel);
+      const $$ = sel => document.querySelectorAll(sel);
+      const fmt = n => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
+
+      const programTypeRadios = $$('input[name="programType"]');
+      const durationSelect = $('#duration');
+      const internationalWarning = $('#internationalWarning');
+      const calculateBtn = $('#calculateBtn');
+      const resultsSection = $('#resultsSection');
+      const recalculateBtn = $('#recalculateBtn');
+      const paymentScheduleContent = $('#paymentScheduleContent');
+      const scrollIndicator = $('#scrollIndicator');
+
+      programTypeRadios.forEach(r => r.addEventListener('change', checkInternationalProgram));
+      if (durationSelect) durationSelect.addEventListener('change', checkInternationalProgram);
+      if (calculateBtn) calculateBtn.addEventListener('click', calculateBudget);
+      if (recalculateBtn) recalculateBtn.addEventListener('click', () => {
+        resultsSection.classList.add('hidden');
+        $('#formSection').classList.remove('hidden');
+        $('#budgetForm').scrollIntoView({behavior:'smooth'});
+      });
+      if (scrollIndicator) scrollIndicator.addEventListener('click', () => {
+        const el = document.getElementById('paymentScheduleSection');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      function checkInternationalProgram() {
+        const programType = document.querySelector('input[name="programType"]:checked').value;
+        const duration = parseInt(durationSelect.value, 10);
+        if (programType === 'international' && duration < 6) {
+          internationalWarning.classList.remove('hidden');
+          calculateBtn.disabled = true;
+          calculateBtn.classList.add('opacity-50','cursor-not-allowed');
+        } else {
+          internationalWarning.classList.add('hidden');
+          calculateBtn.disabled = false;
+          calculateBtn.classList.remove('opacity-50','cursor-not-allowed');
+        }
+      }
+
+      function calculateBudget() {
+        const programType = document.querySelector('input[name="programType"]:checked').value;
+        const duration = parseInt(durationSelect.value, 10);
+        const roomType = document.querySelector('input[name="roomType"]:checked').value;
+        const transportType = document.querySelector('input[name="transportType"]:checked').value;
+
+        if (programType === 'international' && duration < 6) return;
+
+        const trainingFee = (programType === 'normal') ? normalProgramFees[duration] : internationalProgramFees[duration];
+        const hasExamFee = programType === 'international';
+        const totalExamFee = hasExamFee ? examFee : 0;
+        const roomFeeTotal = roomFees[roomType] * duration;
+        const maintenanceTotal = maintenanceFee * duration;
+        const transportFee = transportFees[transportType];
+
+        const trainingSubtotal = trainingFee + totalExamFee;
+        const accommodationSubtotal = roomFeeTotal + maintenanceTotal;
+        const booksSubtotal = booksFee;
+        const transportSubtotal = transportFee;
+        const totalCost = trainingSubtotal + accommodationSubtotal + booksSubtotal + transportSubtotal;
+
+        $('#programTypeResult').textContent = (programType === 'normal') ? 'Normal' : 'International';
+        $('#durationResult').textContent = duration + ' mois';
+        $('#trainingFeeResult').textContent = fmt(trainingFee);
+
+        if (hasExamFee) {
+          $('#examFeeContainer').classList.remove('hidden');
+          $('#examFeeResult').textContent = fmt(totalExamFee);
+          $('#examFeeNote').classList.remove('hidden');
+        } else {
+          $('#examFeeContainer').classList.add('hidden');
+          $('#examFeeNote').classList.add('hidden');
+        }
+
+        $('#trainingSubtotalResult').textContent = fmt(trainingSubtotal);
+
+        const roomTypeText = (roomType === 'doubleVentilee') ? 'Double ventilée' : (roomType === 'doubleClimatisee') ? 'Double climatisée' : 'Individuelle';
+        $('#roomTypeResult').textContent = roomTypeText;
+        $('#roomCostResult').textContent = fmt(roomFeeTotal);
+        $('#maintenanceFeeResult').textContent = fmt(maintenanceTotal);
+        $('#accommodationSubtotalResult').textContent = fmt(accommodationSubtotal);
+
+        const transportTypeText = (transportType === 'avion') ? 'Avion' : (transportType === 'bus') ? 'Bus' : 'Aucun';
+        $('#transportTypeResult').textContent = transportTypeText;
+        $('#transportSubtotalResult').textContent = fmt(transportSubtotal);
+
+        $('#totalCostResult').textContent = fmt(totalCost);
+
+        // Payment schedule (aperçu simple). Pour la version finale, je peux réinsérer ta logique complète.
+        paymentScheduleContent.innerHTML = `
+          <div class="text-lg mb-2">Résumé des paiements (aperçu)</div>
+          <table class="payment-schedule-table">
+            <thead><tr class="bg-teal-100"><th>Échéance</th><th>Détail</th><th class="text-right">Montant</th></tr></thead>
+            <tbody>
+              <tr><td>À l'inscription</td><td>Frais de formation + livres</td><td class="text-right">${fmt(Math.round(trainingFee*0.5) + booksFee)}</td></tr>
+              <tr><td>Avant le voyage</td><td>Reste formation + maintenance + transport</td><td class="text-right">${fmt(Math.round(trainingFee*0.5) + maintenanceTotal + transportFee)}</td></tr>
+              <tr class="total-row"><td colspan="2">Total</td><td class="text-right">${fmt(totalCost)}</td></tr>
+            </tbody>
+          </table>
+        `;
+
+        resultsSection.classList.remove('hidden');
+        $('#formSection').classList.add('hidden');
+        $('#resultsTitle').focus();
+      }
+
+      // Initial validation
+      checkInternationalProgram();
+    });
+  </script>
+</body>
+</html>

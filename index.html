@@ -3,22 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculateur de Budget - 𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋</title>
+  <title>Calculateur Séjour Ghana - Cheikna SARL</title>
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google font -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root { font-family: 'Poppins', sans-serif; }
-
     * { box-sizing: border-box; }
-
     html,body { height:100%; margin:0; background:#f7fafc; font-size:16px; }
 
-    /* A4 container responsive: on small screens use max-width */
     .a4-container {
       width: 210mm;
       max-width: 100%;
@@ -32,8 +29,8 @@
     }
 
     .logo-placeholder {
-      width: 160px;
-      height: 36px;
+      width: 200px;
+      height: 40px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -46,14 +43,25 @@
     }
 
     .payment-schedule-table { width:100%; border-collapse: collapse; }
-    .payment-schedule-table th, .payment-schedule-table td { padding:6px; text-align:left; font-size:15px; }
-    .payment-schedule-table th:last-child, .payment-schedule-table td:last-child { text-align:right; }
+    .payment-schedule-table th,
+    .payment-schedule-table td {
+      padding:6px;
+      text-align:left;
+      font-size:15px;
+    }
+    .payment-schedule-table th:last-child,
+    .payment-schedule-table td:last-child {
+      text-align:right;
+    }
+    .payment-schedule-table thead tr { background:#e6fffa; }
     .payment-schedule-table tr:nth-child(even) { background: rgba(237,242,247,0.7); }
-    .payment-schedule-table tr.total-row { font-weight:600; border-top:1px solid #CBD5E0; border-bottom:1px solid #CBD5E0; }
-    .payment-schedule-table tr.subtotal-row { font-weight:500; border-top:1px dashed #CBD5E0; }
-    .payment-schedule-table tr.section-header { background:#EDF2F7; font-weight:600; }
+    .payment-schedule-table tr.total-row {
+      font-weight:600;
+      border-top:1px solid #CBD5E0;
+      border-bottom:1px solid #CBD5E0;
+      background:#f1f5f9;
+    }
 
-    /* Scroll indicator animation */
     .animate-bounceY { animation: bounceY 2s infinite; }
     @keyframes bounceY {
       0%,20%,50%,80%,100%{ transform: translateY(0); }
@@ -61,7 +69,6 @@
       60%{ transform: translateY(-4px); }
     }
 
-    /* Print rules: A4 */
     @page { size: A4; margin: 10mm; }
     @media print {
       body { background: #fff; }
@@ -80,318 +87,578 @@
           }
         }
       }
-    }
+    };
   </script>
 </head>
+
 <body>
-  <main class="a4-container" role="main" aria-label="Calculateur de budget 𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋">
-    <div class="mb-4">
-      <header class="flex items-center justify-between mb-6">
-        <div class="logo-placeholder" aria-hidden="true">𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋</div>
-        <h1 class="text-3xl font-bold text-teal-700">Calculateur de Budget</h1>
-      </header>
+<main class="a4-container" role="main" aria-label="Calculateur de séjour linguistique Cheikna SARL">
+  <div class="mb-4">
+    <!-- HEADER -->
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+      <div class="logo-placeholder" aria-hidden="true">CHEIKNA SARL</div>
+      <div class="text-right mt-4 md:mt-0">
+        <h1 class="text-3xl font-bold text-teal-700 leading-tight">Séjour linguistique au Ghana</h1>
+        <p class="text-gray-500 text-sm font-medium">Estimation personnalisée</p>
+      </div>
+    </header>
 
-      <!-- Form -->
-      <section id="formSection" class="bg-gray-50 rounded-md shadow-sm p-4 mb-6" aria-labelledby="formTitle">
-        <h2 id="formTitle" class="sr-only">Formulaire de configuration</h2>
+    <!-- FORMULAIRE -->
+    <section id="formSection" class="bg-gray-50 rounded-md shadow-sm p-4 mb-6">
+      <form id="budgetForm" novalidate class="space-y-6">
+        <!-- ÉCOLE -->
+        <fieldset class="border-b pb-4">
+          <legend class="text-lg font-semibold text-teal-700 mb-2 flex items-center">
+            <span class="mr-2">🏫</span> École
+          </legend>
 
-        <form id="budgetForm" novalidate>
-          <!-- Programme -->
-          <fieldset class="mb-4 border-b pb-3">
-            <legend class="text-xl font-semibold text-teal-700 mb-2 flex items-center"><span class="mr-1">📘</span> Formation en anglais</legend>
+          <div role="radiogroup" aria-label="École" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-lg text-gray-800">
+            <label class="flex items-start p-3 rounded border border-teal-200 bg-white cursor-pointer">
+              <input type="radio" name="school" value="ELL" checked class="mt-1 h-5 w-5 text-teal-600">
+              <span class="ml-2">
+                <span class="font-semibold text-teal-700">ELL</span><br>
+                <span class="text-sm text-gray-600">Centre de langue</span>
+              </span>
+            </label>
 
-            <div class="mb-3">
-              <label class="block text-gray-700 text-lg mb-1">Type de programme</label>
-              <div role="radiogroup" aria-label="Type de programme" class="flex flex-col space-y-1">
-                <label class="inline-flex items-center">
-                  <input type="radio" name="programType" value="normal" checked class="form-radio text-teal-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Programme normal</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input type="radio" name="programType" value="international" class="form-radio text-teal-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Programme international</span>
-                </label>
-              </div>
+            <label class="flex items-start p-3 rounded border border-teal-200 bg-white cursor-pointer">
+              <input type="radio" name="school" value="TAS" class="mt-1 h-5 w-5 text-teal-600">
+              <span class="ml-2">
+                <span class="font-semibold text-teal-700">TAS English Institute</span><br>
+                <span class="text-sm text-gray-600">Anglais académique & pratique</span>
+              </span>
+            </label>
+
+            <label class="flex items-start p-3 rounded border border-teal-200 bg-white cursor-pointer">
+              <input type="radio" name="school" value="Pentecost" class="mt-1 h-5 w-5 text-teal-600">
+              <span class="ml-2">
+                <span class="font-semibold text-teal-700">Pentecost University</span><br>
+                <span class="text-sm text-gray-600">Language Centre</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- COURS / DURÉE / NIVEAU -->
+        <fieldset class="border-b pb-4">
+          <legend class="text-lg font-semibold text-green-700 mb-2 flex items-center">
+            <span class="mr-2">📘</span> Programme
+          </legend>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Type de cours -->
+            <div>
+              <label class="block text-gray-700 text-lg mb-1">Type de cours</label>
+              <select id="courseType" name="courseType" class="w-full px-3 py-2 text-lg border border-gray-300 rounded-md">
+                <option value="normal">Cours normal</option>
+                <option value="intensif">Cours intensif</option>
+                <option value="online">Cours en ligne</option>
+              </select>
             </div>
 
-            <div class="mb-3">
-              <label for="duration" class="block text-gray-700 text-lg mb-1">Durée</label>
+            <!-- Durée -->
+            <div>
+              <label class="block text-gray-700 text-lg mb-1">Durée</label>
               <select id="duration" name="duration" class="w-full px-3 py-2 text-lg border border-gray-300 rounded-md">
                 <option value="1">1 mois</option>
                 <option value="2">2 mois</option>
-                <option value="3">3 mois</option>
+                <option value="3" selected>3 mois</option>
                 <option value="4">4 mois</option>
+                <option value="5">5 mois</option>
                 <option value="6">6 mois</option>
                 <option value="9">9 mois</option>
                 <option value="12">12 mois</option>
               </select>
             </div>
 
-            <div id="internationalWarning" class="hidden bg-yellow-100 border-l-2 border-yellow-500 p-2 mb-2 text-lg" role="status" aria-live="polite">
-              <p class="text-yellow-700">Programme international: minimum 6 mois.</p>
-            </div>
-          </fieldset>
-
-          <!-- Hébergement -->
-          <fieldset class="mb-4 border-b pb-3">
-            <legend class="text-xl font-semibold text-green-700 mb-2 flex items-center"><span class="mr-1">🏠</span> Hébergement</legend>
-
-            <div class="mb-3">
-              <label class="block text-gray-700 text-lg mb-1">Type de chambre</label>
-              <div role="radiogroup" aria-label="Type de chambre" class="flex flex-col space-y-1">
-                <label class="inline-flex items-center">
-                  <input type="radio" name="roomType" value="doubleVentilee" checked class="form-radio text-green-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Double ventilée (30 000 FCFA/mois)</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input type="radio" name="roomType" value="doubleClimatisee" class="form-radio text-green-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Double climatisée (40 000 FCFA/mois)</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input type="radio" name="roomType" value="individuelle" class="form-radio text-green-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Individuelle (55 000 FCFA/mois)</span>
-                </label>
-              </div>
-            </div>
-
-            <p class="text-lg text-gray-600">Frais de maintenance: <span class="font-semibold">3 000 FCFA/mois</span></p>
-          </fieldset>
-
-          <!-- Livres & Transport -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <!-- Niveau Pentecost -->
             <div>
-              <h3 class="text-xl font-semibold text-purple-800 mb-2 flex items-center"><span class="mr-1">📚</span> Livres et Uniformes</h3>
-              <p class="text-lg text-gray-700">Montant fixe: <span class="font-semibold">40 000 FCFA</span></p>
-            </div>
-
-            <div>
-              <h3 class="text-xl font-semibold text-orange-800 mb-2 flex items-center"><span class="mr-1">🚐</span> Service d'accueil</h3>
-              <div class="flex flex-col space-y-1" role="radiogroup" aria-label="Service d'accueil">
-                <label class="inline-flex items-center">
-                  <input type="radio" name="transportType" value="avion" checked class="form-radio text-orange-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Avion (20 000 FCFA)</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input type="radio" name="transportType" value="bus" class="form-radio text-orange-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Bus (25 000 FCFA)</span>
-                </label>
-                <label class="inline-flex items-center">
-                  <input type="radio" name="transportType" value="aucun" class="form-radio text-orange-600 h-5 w-5">
-                  <span class="ml-2 text-lg">Aucun (0 FCFA)</span>
-                </label>
-              </div>
+              <label class="block text-gray-700 text-lg mb-1">Niveau (Pentecost)</label>
+              <select id="pentecostLevel" name="pentecostLevel" class="w-full px-3 py-2 text-lg border border-gray-300 rounded-md">
+                <option value="beginner">Beginner</option>
+                <option value="lower">Lower Intermediate</option>
+                <option value="upper">Upper Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+              <p class="text-xs text-gray-500 mt-1">Ignoré si autre école.</p>
             </div>
           </div>
 
-          <div class="mt-4 flex justify-center">
-            <button id="calculateBtn" type="button" class="btn-primary bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-sm">Calculer mon budget</button>
+          <div id="onlineNote" class="hidden bg-yellow-50 border-l-4 border-yellow-500 p-2 mt-3 text-base text-yellow-700 rounded">
+            Cours en ligne : logement non requis.
           </div>
-        </form>
-      </section>
+        </fieldset>
 
-      <!-- Results -->
-      <section id="resultsSection" class="bg-gray-50 rounded-md shadow-sm p-4 hidden" aria-labelledby="resultsTitle" aria-live="polite" role="region">
-        <h2 id="resultsTitle" class="text-2xl font-bold text-center text-teal-700 mb-4">Résumé de votre budget</h2>
+        <!-- LOGEMENT -->
+        <fieldset class="border-b pb-4">
+          <legend class="text-lg font-semibold text-green-700 mb-2 flex items-center">
+            <span class="mr-2">🏠</span> Logement
+          </legend>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <!-- Formation -->
-          <div class="bg-teal-50 rounded p-3 border border-teal-200">
-            <h3 class="text-lg font-semibold text-teal-700 mb-2 flex items-center"><span class="mr-1">📘</span> Formation</h3>
-            <div class="space-y-1 text-lg text-gray-700">
-              <div class="flex justify-between"><span>Programme:</span><span id="programTypeResult" class="font-medium"></span></div>
-              <div class="flex justify-between"><span>Durée:</span><span id="durationResult" class="font-medium"></span></div>
-              <div class="flex justify-between"><span>Frais:</span><span id="trainingFeeResult" class="font-medium"></span></div>
-              <div id="examFeeContainer" class="flex justify-between hidden"><span>Examen:</span><span id="examFeeResult" class="font-medium"></span></div>
-              <div class="border-t border-teal-200 mt-1 pt-1 flex justify-between font-semibold"><span>Sous-total:</span><span id="trainingSubtotalResult"></span></div>
-            </div>
+          <div role="radiogroup" aria-label="Type de logement" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-lg text-gray-800">
+            <label class="flex items-start p-3 rounded border border-green-200 bg-white cursor-pointer">
+              <input type="radio" name="housing" value="doubleCampus" checked class="mt-1 h-5 w-5 text-green-600">
+              <span class="ml-2">
+                <span class="font-semibold text-green-700">Chambre Double (ventilée) – Campus</span><br>
+                <span class="text-sm text-gray-600">40 000 F CFA / mois</span>
+              </span>
+            </label>
+
+            <label class="flex items-start p-3 rounded border border-green-200 bg-white cursor-pointer">
+              <input type="radio" name="housing" value="singleCampus" class="mt-1 h-5 w-5 text-green-600">
+              <span class="ml-2">
+                <span class="font-semibold text-green-700">Chambre Single (ventilée) – Campus</span><br>
+                <span class="text-sm text-gray-600">80 000 F CFA / mois</span>
+              </span>
+            </label>
+
+            <label class="flex items-start p-3 rounded border border-green-200 bg-white cursor-pointer">
+              <input type="radio" name="housing" value="singleHC" class="mt-1 h-5 w-5 text-green-600">
+              <span class="ml-2">
+                <span class="font-semibold text-green-700">Chambre Single (ventilée) – Hors campus</span><br>
+                <span class="text-sm text-gray-600">125 000 F CFA / mois</span>
+              </span>
+            </label>
+
+            <label class="flex items-start p-3 rounded border border-green-200 bg-white cursor-pointer">
+              <input type="radio" name="housing" value="singleClim" class="mt-1 h-5 w-5 text-green-600">
+              <span class="ml-2">
+                <span class="font-semibold text-green-700">Chambre Single (climatisée) – Hors campus</span><br>
+                <span class="text-sm text-gray-600">150 000 F CFA / mois</span>
+              </span>
+            </label>
+
+            <label class="flex items-start p-3 rounded border border-green-200 bg-white cursor-pointer">
+              <input type="radio" name="housing" value="chambreSalonCuisine" class="mt-1 h-5 w-5 text-green-600">
+              <span class="ml-2">
+                <span class="font-semibold text-green-700">Chambre salon cuisine – Hors campus</span><br>
+                <span class="text-sm text-gray-600">175 000 F CFA / mois</span>
+              </span>
+            </label>
+
+            <label class="flex items-start p-3 rounded border border-green-200 bg-white cursor-pointer">
+              <input type="radio" name="housing" value="coloc" class="mt-1 h-5 w-5 text-green-600">
+              <span class="ml-2">
+                <span class="font-semibold text-green-700">Colocation – Hors campus</span><br>
+                <span class="text-sm text-gray-600">100 000 F CFA / mois / pers</span>
+              </span>
+            </label>
           </div>
+        </fieldset>
 
-          <!-- Hébergement -->
-          <div class="bg-green-50 rounded p-3 border border-green-200">
-            <h3 class="text-lg font-semibold text-green-800 mb-2 flex items-center"><span class="mr-1">🏠</span> Hébergement</h3>
-            <div class="space-y-1 text-lg text-gray-700">
-              <div class="flex justify-between"><span>Chambre:</span><span id="roomTypeResult" class="font-medium"></span></div>
-              <div class="flex justify-between"><span>Coût chambre:</span><span id="roomCostResult" class="font-medium"></span></div>
-              <div class="flex justify-between"><span>Maintenance:</span><span id="maintenanceFeeResult" class="font-medium"></span></div>
-              <div class="border-t border-green-200 mt-1 pt-1 flex justify-between font-semibold"><span>Sous-total:</span><span id="accommodationSubtotalResult"></span></div>
+        <!-- BOUTON -->
+        <div class="pt-2 flex justify-center">
+          <button id="calculateBtn" type="button" class="btn-primary bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-sm">
+            Calculer mon budget
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RESULTATS -->
+    <section id="resultsSection" class="bg-gray-50 rounded-md shadow-sm p-4 mb-6 hidden" aria-labelledby="resultsTitle" aria-live="polite" role="region">
+      <h2 id="resultsTitle" class="text-2xl font-bold text-center text-teal-700 mb-4">Résumé de votre budget</h2>
+
+      <!-- Ligne 1 : Formation / Logement -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- Formation -->
+        <div class="bg-teal-50 rounded p-3 border border-teal-200">
+          <h3 class="text-lg font-semibold text-teal-700 mb-2 flex items-center">
+            <span class="mr-1">📘</span> Formation
+          </h3>
+          <div class="space-y-1 text-lg text-gray-700">
+            <div class="flex justify-between"><span>École</span><span id="schoolResult" class="font-medium"></span></div>
+            <div class="flex justify-between"><span>Programme</span><span id="programResult" class="font-medium"></span></div>
+            <div class="flex justify-between"><span>Durée</span><span id="durationResult" class="font-medium"></span></div>
+            <div class="flex justify-between"><span>Frais de cours</span><span id="tuitionResult" class="font-medium"></span></div>
+
+            <div id="extrasContainer" class="text-base text-gray-600"></div>
+
+            <div class="border-t border-teal-200 mt-1 pt-1 flex justify-between font-semibold">
+              <span>Total formation</span>
+              <span id="trainingSubtotalResult"></span>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div class="bg-purple-50 rounded p-3 border border-purple-200">
-            <h3 class="text-lg font-semibold text-purple-800 mb-2 flex items-center"><span class="mr-1">📚</span> Livres et Uniformes</h3>
-            <div class="text-lg text-gray-700"><div class="flex justify-between font-semibold"><span>Sous-total:</span><span id="booksSubtotalResult">40 000 FCFA</span></div></div>
+        <!-- Logement -->
+        <div class="bg-green-50 rounded p-3 border border-green-200">
+          <h3 class="text-lg font-semibold text-green-800 mb-2 flex items-center">
+            <span class="mr-1">🏠</span> Logement
+          </h3>
+          <div class="space-y-1 text-lg text-gray-700">
+            <div class="flex justify-between"><span>Type logement</span><span id="housingTypeResult" class="font-medium"></span></div>
+            <div class="flex justify-between"><span>Coût logement</span><span id="housingCostResult" class="font-medium"></span></div>
+            <div class="border-t border-green-200 mt-1 pt-1 flex justify-between font-semibold">
+              <span>Total logement</span>
+              <span id="housingSubtotalResult"></span>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div class="bg-orange-50 rounded p-3 border border-orange-200">
-            <h3 class="text-lg font-semibold text-orange-800 mb-2 flex items-center"><span class="mr-1">🚐</span> Service d'accueil</h3>
-            <div class="text-lg text-gray-700">
-              <div class="flex justify-between"><span>Transport:</span><span id="transportTypeResult" class="font-medium"></span></div>
-              <div class="flex justify-between font-semibold"><span>Sous-total:</span><span id="transportSubtotalResult"></span></div>
+      <!-- Ligne 2 : Service & Total -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-purple-50 rounded p-3 border border-purple-200">
+          <h3 class="text-lg font-semibold text-purple-800 mb-2 flex items-center">
+            <span class="mr-1">🤝</span> Service Cheikna SARL
+          </h3>
+          <div class="text-lg text-gray-700">
+            <div class="flex justify-between">
+              <span>Accompagnement & installation</span>
+              <span id="serviceFeeResult" class="font-medium"></span>
+            </div>
+            <div class="flex justify-between font-semibold">
+              <span>Total service</span><span id="serviceSubtotalResult"></span>
             </div>
           </div>
         </div>
 
-        <div class="bg-gray-100 rounded p-4 border border-gray-300 mb-4">
+        <div class="bg-gray-100 rounded p-4 border border-gray-300">
           <div class="flex justify-between items-center">
-            <h3 class="text-xl font-bold text-gray-800">COÛT TOTAL ESTIMÉ:</h3>
+            <h3 class="text-xl font-bold text-gray-800">COÛT TOTAL ESTIMÉ</h3>
             <span id="totalCostResult" class="text-2xl font-bold text-teal-700"></span>
           </div>
         </div>
+      </div>
 
-        <div id="examFeeNote" class="hidden mt-2 bg-yellow-50 border-l-2 border-yellow-500 p-2 text-lg mb-4">
-          <p class="text-yellow-700"><strong>Note:</strong> Frais d'examen IELTS/TOEFL: estimation indicative.</p>
+      <div id="scrollIndicator" class="bg-teal-100 rounded-lg p-3 mb-4 flex items-center justify-center">
+        <div class="text-center">
+          <p class="text-teal-800 font-medium mb-1">Calendrier de paiement</p>
+          <div class="text-teal-600 text-3xl animate-bounceY">⬇️</div>
         </div>
+      </div>
 
-        <div id="scrollIndicator" class="bg-teal-100 rounded-lg p-3 mb-4 flex items-center justify-center">
-          <div class="text-center">
-            <p class="text-teal-800 font-medium mb-1">Voir le calendrier de paiement ci-dessous</p>
-            <div class="text-teal-600 text-3xl animate-bounceY">⬇️</div>
-          </div>
-        </div>
+      <!-- Calendrier de paiement -->
+      <section id="paymentScheduleSection" class="mt-6">
+        <h2 class="text-2xl font-bold text-center text-teal-700 mb-4 flex items-center justify-center">
+          <span class="mr-2">🧾</span> Calendrier de paiement (Suggestion)
+        </h2>
 
-        <!-- Payment schedule -->
-        <div id="paymentScheduleSection" class="mt-6">
-          <h2 id="paymentScheduleTitle" class="text-2xl font-bold text-center text-teal-700 mb-4 flex items-center justify-center"><span class="mr-1">🧾</span> CALENDRIER DE PAIEMENT</h2>
-          <div id="paymentScheduleContent" class="bg-teal-50 rounded p-3 border border-teal-200 mb-4"></div>
-        </div>
-
-        <div class="mt-4 flex justify-center">
-          <button id="recalculateBtn" class="btn-primary bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full text-lg shadow-sm">Modifier mes choix</button>
-        </div>
+        <div id="paymentScheduleContent" class="bg-teal-50 rounded p-3 border border-teal-200 mb-4"></div>
       </section>
 
-      <footer class="mt-6 text-center text-lg text-gray-500">© 𝐂𝐡𝐞𝐢𝐤𝐧𝐚 𝐒𝐀𝐑𝐋 - Calculateur de budget de formation</footer>
-    </div>
-  </main>
+      <div class="mt-4 flex justify-center">
+        <button id="recalculateBtn" class="btn-primary bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full text-lg shadow-sm">
+          Modifier mes choix
+        </button>
+      </div>
+    </section>
 
-  <!-- Script: logique -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Prix et données (réinsérer vos tableaux d'échéances complets si nécessaire)
-      const normalProgramFees = {1:140000,2:240000,3:300000,4:360000,6:480000,9:630000,12:720000};
-      const internationalProgramFees = {6:530000,9:680000,12:770000};
+    <footer class="mt-6 text-center text-lg text-gray-500">
+      © Cheikna SARL
+    </footer>
+  </div>
+</main>
 
-      // Si tu veux, je peux coller tes objets complets normalPaymentSchedules et internationalPaymentSchedules
-      const normalPaymentSchedules = {}; // <-- réinsérer ici les données d'origine si besoin
-      const internationalPaymentSchedules = {}; // <-- réinsérer ici les données d'origine si besoin
+<!-- LOGIQUE -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  //
+  // TARIFS OFFICIELS
+  //
 
-      const examFee = 170000;
-      const roomFees = { doubleVentilee:30000, doubleClimatisee:40000, individuelle:55000 };
-      const maintenanceFee = 3000;
-      const transportFees = { avion:20000, bus:25000, aucun:0 };
-      const booksFee = 40000;
+  // ELL
+  const ellNormal = {3:180000,6:210000,9:260000,12:320000};
+  const ellIntensif = {3:210000,6:320000}; // pas de tarif 9/12 mois pour intensif
+  const ellOnline = {1:150000,2:200000,3:250000,4:300000,5:350000,6:400000};
 
-      const $ = sel => document.querySelector(sel);
-      const $$ = sel => document.querySelectorAll(sel);
-      const fmt = n => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
+  const ellExtras = {
+    inscription: 9000,
+    livres_1_6_mois: 12000,
+    livres_6_12_mois: 18000,
+    carte: 4000,
+    polo: 5000,
+    graduation: 15000
+  };
 
-      const programTypeRadios = $$('input[name="programType"]');
-      const durationSelect = $('#duration');
-      const internationalWarning = $('#internationalWarning');
-      const calculateBtn = $('#calculateBtn');
-      const resultsSection = $('#resultsSection');
-      const recalculateBtn = $('#recalculateBtn');
-      const paymentScheduleContent = $('#paymentScheduleContent');
-      const scrollIndicator = $('#scrollIndicator');
+  // TAS
+  const tasNormal = {3:170000,6:210000,9:270000,12:370000};
+  const tasIntensif = {3:210000,6:320000};
+  const tasOnline = {1:150000,2:200000,3:250000,4:300000,5:350000,6:400000};
 
-      programTypeRadios.forEach(r => r.addEventListener('change', checkInternationalProgram));
-      if (durationSelect) durationSelect.addEventListener('change', checkInternationalProgram);
-      if (calculateBtn) calculateBtn.addEventListener('click', calculateBudget);
-      if (recalculateBtn) recalculateBtn.addEventListener('click', () => {
-        resultsSection.classList.add('hidden');
-        $('#formSection').classList.remove('hidden');
-        $('#budgetForm').scrollIntoView({behavior:'smooth'});
-      });
-      if (scrollIndicator) scrollIndicator.addEventListener('click', () => {
-        const el = document.getElementById('paymentScheduleSection');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      });
+  // Graduation TAS = 2 000 F CFA (décision interne)
+  const tasExtras = {
+    inscription: 45000,
+    graduation: 2000
+  };
 
-      function checkInternationalProgram() {
-        const programType = document.querySelector('input[name="programType"]:checked').value;
-        const duration = parseInt(durationSelect.value, 10);
-        if (programType === 'international' && duration < 6) {
-          internationalWarning.classList.remove('hidden');
-          calculateBtn.disabled = true;
-          calculateBtn.classList.add('opacity-50','cursor-not-allowed');
-        } else {
-          internationalWarning.classList.add('hidden');
-          calculateBtn.disabled = false;
-          calculateBtn.classList.remove('opacity-50','cursor-not-allowed');
-        }
-      }
+  // Pentecost University (montant pour 3 mois selon niveau)
+  const pentecostLevels = {
+    beginner: 77000,
+    lower: 128000,
+    upper: 128000,
+    advanced: 154000
+  };
+  const pentecostExtras = {}; // pas de détails fournis
 
-      function calculateBudget() {
-        const programType = document.querySelector('input[name="programType"]:checked').value;
-        const duration = parseInt(durationSelect.value, 10);
-        const roomType = document.querySelector('input[name="roomType"]:checked').value;
-        const transportType = document.querySelector('input[name="transportType"]:checked').value;
+  // Logement (par mois)
+  const housingPrices = {
+    doubleCampus: 40000,
+    singleCampus: 80000,
+    singleHC: 125000,
+    singleClim: 150000,
+    chambreSalonCuisine: 175000,
+    coloc: 100000
+  };
 
-        if (programType === 'international' && duration < 6) return;
+  // Service Cheikna SARL
+  const serviceFee = 75000;
 
-        const trainingFee = (programType === 'normal') ? normalProgramFees[duration] : internationalProgramFees[duration];
-        const hasExamFee = programType === 'international';
-        const totalExamFee = hasExamFee ? examFee : 0;
-        const roomFeeTotal = roomFees[roomType] * duration;
-        const maintenanceTotal = maintenanceFee * duration;
-        const transportFee = transportFees[transportType];
+  // Helpers
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => document.querySelectorAll(sel);
+  const fmt = n => new Intl.NumberFormat('fr-FR').format(n) + ' F CFA';
 
-        const trainingSubtotal = trainingFee + totalExamFee;
-        const accommodationSubtotal = roomFeeTotal + maintenanceTotal;
-        const booksSubtotal = booksFee;
-        const transportSubtotal = transportFee;
-        const totalCost = trainingSubtotal + accommodationSubtotal + booksSubtotal + transportSubtotal;
+  const calculateBtn = $('#calculateBtn');
+  const resultsSection = $('#resultsSection');
+  const recalculateBtn = $('#recalculateBtn');
+  const scrollIndicator = $('#scrollIndicator');
+  const paymentScheduleContent = $('#paymentScheduleContent');
+  const onlineNote = $('#onlineNote');
 
-        $('#programTypeResult').textContent = (programType === 'normal') ? 'Normal' : 'International';
-        $('#durationResult').textContent = duration + ' mois';
-        $('#trainingFeeResult').textContent = fmt(trainingFee);
+  if (calculateBtn) calculateBtn.addEventListener('click', calculateBudget);
+  if (recalculateBtn) recalculateBtn.addEventListener('click', () => {
+    resultsSection.classList.add('hidden');
+    $('#formSection').classList.remove('hidden');
+    $('#budgetForm').scrollIntoView({behavior:'smooth'});
+  });
+  if (scrollIndicator) scrollIndicator.addEventListener('click', () => {
+    const el = $('#paymentScheduleSection');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  });
 
-        if (hasExamFee) {
-          $('#examFeeContainer').classList.remove('hidden');
-          $('#examFeeResult').textContent = fmt(totalExamFee);
-          $('#examFeeNote').classList.remove('hidden');
-        } else {
-          $('#examFeeContainer').classList.add('hidden');
-          $('#examFeeNote').classList.add('hidden');
-        }
+  $('#courseType').addEventListener('change', e => {
+    if (e.target.value === 'online') {
+      onlineNote.classList.remove('hidden');
+    } else {
+      onlineNote.classList.add('hidden');
+    }
+  });
 
-        $('#trainingSubtotalResult').textContent = fmt(trainingSubtotal);
+  // Calcul frais cours
+  function pickTuition(school, type, duration, pentecostLevel) {
+    duration = parseInt(duration,10);
 
-        const roomTypeText = (roomType === 'doubleVentilee') ? 'Double ventilée' : (roomType === 'doubleClimatisee') ? 'Double climatisée' : 'Individuelle';
-        $('#roomTypeResult').textContent = roomTypeText;
-        $('#roomCostResult').textContent = fmt(roomFeeTotal);
-        $('#maintenanceFeeResult').textContent = fmt(maintenanceTotal);
-        $('#accommodationSubtotalResult').textContent = fmt(accommodationSubtotal);
+    if (school === 'Pentecost') {
+      // Montant donné pour 3 mois, proratisé par mois
+      const cost3mois = pentecostLevels[pentecostLevel] || 0;
+      const perMonth = cost3mois / 3;
+      return perMonth * duration;
+    }
 
-        const transportTypeText = (transportType === 'avion') ? 'Avion' : (transportType === 'bus') ? 'Bus' : 'Aucun';
-        $('#transportTypeResult').textContent = transportTypeText;
-        $('#transportSubtotalResult').textContent = fmt(transportSubtotal);
+    if (type === 'online') {
+      const table = (school === 'ELL') ? ellOnline : tasOnline;
+      const key = duration > 6 ? 6 : duration; // au-delà de 6 mois : même base 6 mois
+      return table[key] || 0;
+    }
 
-        $('#totalCostResult').textContent = fmt(totalCost);
+    if (type === 'normal') {
+      const table = (school === 'ELL') ? ellNormal : tasNormal;
+      return table[duration] || 0;
+    }
 
-        // Payment schedule (aperçu simple). Pour la version finale, je peux réinsérer ta logique complète.
-        paymentScheduleContent.innerHTML = `
-          <div class="text-lg mb-2">Résumé des paiements (aperçu)</div>
-          <table class="payment-schedule-table">
-            <thead><tr class="bg-teal-100"><th>Échéance</th><th>Détail</th><th class="text-right">Montant</th></tr></thead>
-            <tbody>
-              <tr><td>À l'inscription</td><td>Frais de formation + livres</td><td class="text-right">${fmt(Math.round(trainingFee*0.5) + booksFee)}</td></tr>
-              <tr><td>Avant le voyage</td><td>Reste formation + maintenance + transport</td><td class="text-right">${fmt(Math.round(trainingFee*0.5) + maintenanceTotal + transportFee)}</td></tr>
-              <tr class="total-row"><td colspan="2">Total</td><td class="text-right">${fmt(totalCost)}</td></tr>
-            </tbody>
-          </table>
-        `;
+    if (type === 'intensif') {
+      const table = (school === 'ELL') ? ellIntensif : tasIntensif;
+      if (table[duration]) return table[duration];
+      if (duration > 6 && table[6]) return table[6];
+      return 0;
+    }
 
-        resultsSection.classList.remove('hidden');
-        $('#formSection').classList.add('hidden');
-        $('#resultsTitle').focus();
-      }
+    return 0;
+  }
 
-      // Initial validation
-      checkInternationalProgram();
-    });
-  </script>
+  // Frais annexes selon l'école
+  function pickExtrasTotal(school, duration) {
+    duration = parseInt(duration,10);
+
+    if (school === 'ELL') {
+      let total = 0;
+      total += ellExtras.inscription;
+      total += ellExtras.carte;
+      total += ellExtras.polo;
+      total += ellExtras.graduation;
+      total += (duration <= 6 ? ellExtras.livres_1_6_mois : ellExtras.livres_6_12_mois);
+      return total;
+    }
+
+    if (school === 'TAS') {
+      let total = 0;
+      total += tasExtras.inscription;
+      total += tasExtras.graduation;
+      return total;
+    }
+
+    if (school === 'Pentecost') {
+      return 0;
+    }
+
+    return 0;
+  }
+
+  // Détail frais annexes (affichage)
+  function buildExtrasBreakdownHTML(school, duration) {
+    duration = parseInt(duration,10);
+    let html = '';
+
+    if (school === 'ELL') {
+      html += '<div class="mt-1 text-sm text-gray-600 leading-snug">';
+      html += '<div>Inscription : ' + fmt(ellExtras.inscription) + '</div>';
+      html += '<div>Carte étudiant : ' + fmt(ellExtras.carte) + '</div>';
+      html += '<div>Polo : ' + fmt(ellExtras.polo) + '</div>';
+      html += '<div>Graduation : ' + fmt(ellExtras.graduation) + '</div>';
+      html += '<div>Livres : ' + fmt(duration<=6?ellExtras.livres_1_6_mois:ellExtras.livres_6_12_mois) + '</div>';
+      html += '</div>';
+    }
+
+    if (school === 'TAS') {
+      html += '<div class="mt-1 text-sm text-gray-600 leading-snug">';
+      html += '<div>Inscription : ' + fmt(tasExtras.inscription) + '</div>';
+      html += '<div>Graduation : ' + fmt(tasExtras.graduation) + '</div>';
+      html += '</div>';
+    }
+
+    if (school === 'Pentecost') {
+      html += '<div class="mt-1 text-sm text-gray-600 leading-snug">';
+      html += '<div>Frais administratifs : inclus selon l\'université</div>';
+      html += '</div>';
+    }
+
+    return html;
+  }
+
+  // Logement total
+  function housingTotalCost(duration, housingType, isOnline) {
+    duration = parseInt(duration,10);
+    if (isOnline) return 0;
+    const monthly = housingPrices[housingType] || 0;
+    return monthly * duration;
+  }
+
+  // Calendrier de paiement
+  function buildPaymentTable(total, tuition, extrasTotal, housing, serviceSubtotal) {
+    const step1 = extrasTotal + serviceSubtotal + Math.round(tuition * 0.4);
+    const step2 = Math.round(tuition * 0.6);
+    const step3 = housing;
+
+    return `
+    <table class="payment-schedule-table w-full">
+      <thead>
+        <tr>
+          <th>Étape</th>
+          <th>Détail</th>
+          <th class="text-right">Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Étape 1</td>
+          <td>Inscription + service + avance cours</td>
+          <td class="text-right">${fmt(step1)}</td>
+        </tr>
+        <tr>
+          <td>Étape 2</td>
+          <td>Solde cours</td>
+          <td class="text-right">${fmt(step2)}</td>
+        </tr>
+        <tr>
+          <td>Étape 3</td>
+          <td>Logement à l'arrivée</td>
+          <td class="text-right">${fmt(step3)}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="2">Total projet</td>
+          <td class="text-right">${fmt(total)}</td>
+        </tr>
+      </tbody>
+    </table>`;
+  }
+
+  // Calcul principal
+  function calculateBudget() {
+    const school = document.querySelector('input[name="school"]:checked').value;
+    const courseType = $('#courseType').value;
+    const duration = $('#duration').value;
+    const pentecostLevel = $('#pentecostLevel').value;
+    const housingType = document.querySelector('input[name="housing"]:checked').value;
+
+    const tuition = pickTuition(school, courseType, duration, pentecostLevel);
+    const extrasTotal = pickExtrasTotal(school, duration);
+    const housingTotal = housingTotalCost(duration, housingType, courseType === 'online');
+
+    // cours en ligne => pas de déplacement, donc pas d'installation terrain
+    const serviceSubtotal = (courseType === 'online') ? 0 : serviceFee;
+
+    const trainingSubtotal = tuition + extrasTotal;
+    const housingSubtotal = housingTotal;
+    const grandTotal = trainingSubtotal + housingSubtotal + serviceSubtotal;
+
+    const schoolLabel =
+      school === 'ELL' ? 'ELL'
+      : school === 'TAS' ? 'TAS English Institute'
+      : 'Pentecost University';
+
+    const levelMap = {
+      beginner: 'Beginner',
+      lower: 'Lower Intermediate',
+      upper: 'Upper Intermediate',
+      advanced: 'Advanced'
+    };
+
+    let programName =
+      courseType === 'normal'   ? 'Cours normal'   :
+      courseType === 'intensif' ? 'Cours intensif' :
+                                  'Cours en ligne';
+
+    if (school === 'Pentecost') {
+      programName += ' - ' + (levelMap[pentecostLevel] || '');
+    }
+
+    $('#schoolResult').textContent = schoolLabel;
+    $('#programResult').textContent = programName;
+    $('#durationResult').textContent = duration + ' mois';
+    $('#tuitionResult').textContent = fmt(tuition);
+
+    $('#extrasContainer').innerHTML = buildExtrasBreakdownHTML(school, duration);
+    $('#trainingSubtotalResult').textContent = fmt(trainingSubtotal);
+
+    const housingNames = {
+      doubleCampus: 'Chambre Double (ventilée) – Campus',
+      singleCampus: 'Chambre Single (ventilée) – Campus',
+      singleHC: 'Chambre Single (ventilée) – Hors campus',
+      singleClim: 'Chambre Single (climatisée) – Hors campus',
+      chambreSalonCuisine: 'Chambre salon cuisine – Hors campus',
+      coloc: 'Colocation – Hors campus'
+    };
+
+    $('#housingTypeResult').textContent = (courseType === 'online')
+      ? 'Aucun (cours en ligne)'
+      : (housingNames[housingType] || '—');
+
+    $('#housingCostResult').textContent = fmt(housingTotal);
+    $('#housingSubtotalResult').textContent = fmt(housingSubtotal);
+
+    $('#serviceFeeResult').textContent = (serviceSubtotal === 0)
+      ? fmt(0)
+      : fmt(serviceFee);
+    $('#serviceSubtotalResult').textContent = fmt(serviceSubtotal);
+
+    $('#totalCostResult').textContent = fmt(grandTotal);
+
+    paymentScheduleContent.innerHTML = buildPaymentTable(
+      grandTotal,
+      tuition,
+      extrasTotal,
+      housingTotal,
+      serviceSubtotal
+    );
+
+    resultsSection.classList.remove('hidden');
+    $('#formSection').classList.add('hidden');
+    $('#resultsTitle').focus();
+  }
+
+});
+</script>
 </body>
 </html>
